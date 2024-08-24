@@ -9,6 +9,8 @@ import { noFail } from "../functions/noFail.js";
 import { autoplay } from "../functions/autoplay.js";
 import { search } from "../functions/search.js";
 import { forcePlayableSongs } from "../hacks/forcePlayableSongs.js";
+import { disableTutorial } from "../functions/disableTutorial.js";
+import { disableNews } from "../functions/disableNews.js";
 
 export const activateMod = () => {
   killErrorHandler();
@@ -22,4 +24,6 @@ export const activateMod = () => {
   autoplay();
   search();
   forcePlayableSongs();
+  disableTutorial();
+  disableNews();
 };

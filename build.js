@@ -21,7 +21,13 @@ const xor = (data) => {
 
 async function build(prod, test, agent) {
   await esbuild.build({
-    entryPoints: [test ? "./test/test.js" : agent ? "./agent/agent.js" : "./device/device.js"],
+    entryPoints: [
+      test
+        ? "./test/test.js"
+        : agent
+        ? "./agent/agent.js"
+        : "./device/device.js",
+    ],
     bundle: true,
     outfile,
     minify: prod,
@@ -38,27 +44,27 @@ let shim = {
   setup(build) {
     build.onResolve({ filter: /.*/ }, (args) => {
       const shims = [
-        { name: "buffer", entry: "@frida\\buffer\\index.js" },
-        { name: "http", entry: "@frida\\http\\index.js" },
-        { name: "events", entry: "@frida\\events\\events.js" },
-        { name: "net", entry: "@frida\\net\\index.js" },
-        { name: "util", entry: "@frida\\util\\util.js" },
-        { name: "stream", entry: "@frida\\stream\\index.js" },
-        { name: "assert", entry: "@frida\\assert\\assert.js" },
-        { name: "process", entry: "@frida\\process\\index.js" },
+        { name: "buffer", entry: "@frida/buffer/index.js" },
+        { name: "http", entry: "@frida/http/index.js" },
+        { name: "events", entry: "@frida/events/events.js" },
+        { name: "net", entry: "@frida/net/index.js" },
+        { name: "util", entry: "@frida/util/util.js" },
+        { name: "stream", entry: "@frida/stream/index.js" },
+        { name: "assert", entry: "@frida/assert/assert.js" },
+        { name: "process", entry: "@frida/process/index.js" },
         {
           name: "string_decoder",
-          entry: "@frida\\string_decoder\\lib/string_decoder.js",
+          entry: "@frida/string_decoder/lib/string_decoder.js",
         },
-        { name: "path", entry: "@frida\\path\\index.js" },
-        { name: "timers", entry: "@frida\\timers\\index.js" },
-        { name: "url", entry: "@frida\\url\\url.js" },
-        { name: "crypto", entry: "crypto-browserify\\index.js" },
+        { name: "path", entry: "@frida/path/index.js" },
+        { name: "timers", entry: "@frida/timers/index.js" },
+        { name: "url", entry: "@frida/url/url.js" },
+        { name: "crypto", entry: "crypto-browserify/index.js" },
       ];
       const shim = shims.find((el) => el.name == args.path);
       if (shim) {
         return {
-          path: `${__dirname}\\node_modules\\${shim.entry}`,
+          path: `${__dirname}/node_modules/${shim.entry}`,
           namespace: "file",
         };
       }
@@ -75,20 +81,22 @@ async function run() {
   const prod = process.argv.includes("-prod");
   const test = process.argv.includes("-test");
   const agent = process.argv.includes("-agent");
-  
+
   await build(prod, test, agent);
   let file = fs
     .readFileSync(`./${outfile}`)
     .toString()
     .replaceAll(
       "bo.HTTPParser=T",
-	  "go.ok=function(){return true;};go.equal=function(){return true;};bo.HTTPParser=T"
+      "go.ok=function(){return true;};go.equal=function(){return true;};bo.HTTPParser=T"
     )
     .split("\n");
   for (var i = 0; i < file.length; i++) {
     const line = file[i].trim();
     if (line.startsWith("exports.HTTPParser = HTTPParser2;")) {
-      file[i] = "assert2.ok=function(){return true;};assert2.equal=function(){return true;};" + line;
+      file[i] =
+        "assert2.ok=function(){return true;};assert2.equal=function(){return true;};" +
+        line;
     }
   }
 

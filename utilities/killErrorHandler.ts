@@ -5,7 +5,7 @@ export const killErrorHandler = () => {
 
   spaceape
     .class("com.spaceape.rpc.RpcServices")
-    .method("NotifyError").implementation = function () {
+    .method("NotifyErrorAndDisconnectNetwork").implementation = function () {
     return;
   };
 
