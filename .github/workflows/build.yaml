@@ -27,7 +27,7 @@ jobs:
         uses: ExternalAddress4401/download-apk-action@v1.1
         with:
           version: ${{ steps.version.outputs.version }}
-          data-url: ${{ steps.version.outputs.data-url}}
+          data-url: ${{ steps.version.outputs.data-url }}
       - name: Extract APK
         run: apktool d beatstar.apk --only-main-classes
       - name: Modify APK
@@ -35,4 +35,4 @@ jobs:
       - name: Print
         run: cd ~/apk/beatstar/dist && ls
       - name: Move APK
-        run: mv apk/beatstar/dist/beatstar.apk ../../../
+        run: rm ~/apk/beatstar.apk && mv ~/apk/beatstar/dist/beatstar.apk ~/apk
