@@ -18,7 +18,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: ~/apk
-          key: {{ runner.os }}-node-${{ steps.version.outputs.version }}
+          key: ${{ runner.os }}-node-${{ steps.version.outputs.version }}
       - name: Stop if cache hit
         if: steps.cache.outputs.cache_hit == 'true'
         run: echo "Cache hit. No new version available." #&& exit 0
