@@ -25,4 +25,4 @@ jobs:
       - name: Build APK
         run: java -jar apktool.jar b beatstar
       - name: Move APK
-        run: rm ~/beatstar.apk && mv ~/beatstar/dist/beatstar.apk ~/
+        run: rm beatstar.apk && mv beatstar/dist/beatstar.apk ../../../
