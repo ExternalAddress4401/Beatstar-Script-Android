@@ -33,6 +33,6 @@ jobs:
       - name: Modify APK
         uses: ExternalAddress4401/edit-apk-action@v1.1
       - name: Print
-        run: ls && cd apk && ls
+        run: cd apk && ls
       #- name: Move APK
       #  run: rm ~/apk/beatstar.apk && mv ~/apk/beatstar/dist/beatstar.apk ~/apk
