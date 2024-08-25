@@ -19,10 +19,10 @@ jobs:
           version: ${{ steps.version.outputs.version }}
           data-url: ${{ steps.version.outputs.data-url }}
       - name: Extract APK
-        run: java -jar ~/apktool.jar d beatstar.apk --only-main-classes
+        run: java -jar apktool.jar d beatstar.apk --only-main-classes
       - name: Modify APK
         uses: ExternalAddress4401/edit-apk-action@v1.1
       - name: Build APK
-        run: java - jar ~/apktool b beatstar
+        run: java -jar apktool b beatstar
       - name: Move APK
         run: rm ~/beatstar.apk && mv ~/beatstar/dist/beatstar.apk ~/
