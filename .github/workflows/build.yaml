@@ -9,7 +9,7 @@ jobs:
       - name: Install prerequisites
         run: pip3 install objection
       - name: Download APK tool
-        run: curl https://github.com/iBotPeaches/Apktool/releases/download/v2.9.3/apktool_2.9.3.jar -o apktool.jar
+        run: curl https://github.com/iBotPeaches/Apktool/releases/download/v2.9.3/apktool_2.9.3.jar -o apktool.jar -L
       - name: Get version
         id: version
         uses: ExternalAddress4401/get-version@v1.1
