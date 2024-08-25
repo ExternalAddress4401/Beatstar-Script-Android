@@ -12,7 +12,7 @@ jobs:
         run: mkdir apk
       - name: Get version
         id: version
-        runs: ExternalAddress4401/get-version@v1.1
+        uses: ExternalAddress4401/get-version@v1.1
       - name: Check cache
         id: cache
         uses: actions/cache@v3
@@ -20,10 +20,10 @@ jobs:
           path: ~/apk
           key: ${{ runner.os }}-node-${{ steps.version.outputs.version }}
       - name: Stop if cache hit
-        if: steps.cache.outputs.cache_hit == 'true'
+        if: steps.cache.outputs.cache-hit == 'true'
         run: echo "Cache hit. No new version available." #&& exit 0
       - name: Download APK
-        if: steps.cache.outputs.cache_hit != 'true'
+        if: steps.cache.outputs.cache-hit != 'true'
         uses: ExternalAddress4401/download-apk-action@v1.1
         with:
           version: ${{ steps.version.outputs.version }}
