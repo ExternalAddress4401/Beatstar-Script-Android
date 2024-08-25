@@ -7,7 +7,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Install prerequisites
-        run: sudo apt install apktool && pip3 install objection
+        run: pip3 install objection
+      - name: Download APK tool
+        run: curl https://github.com/iBotPeaches/Apktool/releases/download/v2.9.3/apktool_2.9.3.jar -o apktool.jar
       - name: Get version
         id: version
         uses: ExternalAddress4401/get-version@v1.1
@@ -17,10 +19,10 @@ jobs:
           version: ${{ steps.version.outputs.version }}
           data-url: ${{ steps.version.outputs.data-url }}
       - name: Extract APK
-        run: apktool d beatstar.apk --only-main-classes
+        run: java -jar ~/apktool.jar d beatstar.apk --only-main-classes
       - name: Modify APK
         uses: ExternalAddress4401/edit-apk-action@v1.1
       - name: Build APK
-        run: apktool b beatstar
+        run: java - jar ~/apktool b beatstar
       - name: Move APK
         run: rm ~/beatstar.apk && mv ~/beatstar/dist/beatstar.apk ~/
