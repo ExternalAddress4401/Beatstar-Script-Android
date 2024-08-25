@@ -7,7 +7,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
       - name: Install prerequisites
-        run: sudo apt install apktool objection
+        run: sudo apt install apktool && pip3 install objection
       - name: Download APK
         uses: ExternalAddress4401/download-apk-action@v1.1
       - name: Extract APK
