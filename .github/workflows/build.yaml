@@ -1,0 +1,20 @@
+name: Build
+on: workflow_dispatch
+jobs:
+  build-arm64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Install prerequisites
+        run: apt install apktool objection
+      - name: Download APK
+        uses: ExternalAddress4401/download-apk-action@v1.1
+      - name: Extract APK
+        run: apktool d beatstar.apk --only-main-classes
+      - name: Modify APK
+        uses: ExternalAddress4401/edit-apk-action@v1.1
+      - name: Move APK
+        run: rm beatstar.apk && mv beatstar/dist/beatstar.apk ../../../
+      - name: Print
+        run: ls
