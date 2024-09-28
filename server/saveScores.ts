@@ -1,4 +1,4 @@
-import { customSongs, offline } from "../lib/Globals.js";
+import { customSongs, offline, scores, setScores } from "../lib/Globals.js";
 import { getStatus } from "../functions/autoplay.js";
 import SettingsReader from "../lib/SettingsReader.js";
 import Beatcharts from "../lib/Beatcharts.js";
@@ -36,8 +36,7 @@ export const saveScores = () => {
           }*/
 
     //don't send custom scores to database
-    let shouldSave =
-      offline || getStatus() === "Autoplay enabled" ? false : true;
+    let shouldSave = getStatus() === "Autoplay enabled" ? false : true;
 
     for (var x = 0; x < customSongs.length; x++) {
       const customSongId = customSongs[x].template.field("id").value;
@@ -53,12 +52,29 @@ export const saveScores = () => {
       }
     }
 
+    const absoluteScore = score.field("absoluteScore").value as number;
+
     if (shouldSave) {
-      deviceNetworkRequest("/saveScore", {
-        androidId: Device.getAndroidId(),
-        score: score.field("absoluteScore").value,
-        beatmapId: beatmap.field("id").value,
-      });
+      if (!offline) {
+        deviceNetworkRequest("/saveScore", {
+          androidId: Device.getAndroidId(),
+          score: absoluteScore,
+          beatmapId,
+        });
+      }
+
+      // Update local scores
+      setScores(
+        scores.map((score) =>
+          score.beatmapId === beatmapId
+            ? {
+                ...score,
+                score:
+                  score.score < absoluteScore ? absoluteScore : score.score,
+              }
+            : score
+        )
+      );
     }
 
     return this.method("ShowResults").invoke(result);

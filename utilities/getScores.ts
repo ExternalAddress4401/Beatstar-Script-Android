@@ -5,6 +5,7 @@ import Logger from "../lib/Logger";
 import { deviceNetworkRequest } from "../lib/Utilities";
 import fs from "frida-fs";
 import { Buffer } from "buffer";
+import { BufferedReader } from "../lib/BufferedReader";
 
 export interface Score {
   beatmapId: number;
@@ -30,9 +31,10 @@ export const getScores = () => {
   });
 };
 
-const writeScores = (scores: any) => {
+export const writeScores = (scores: any) => {
   const s = JSON.parse(scores);
   const writer = new BufferedWriter();
+  writer.writeInt(s.length);
   for (const score of s) {
     writer.writeInt(score.beatmapId);
     writer.writeInt(score.score);
@@ -40,4 +42,18 @@ const writeScores = (scores: any) => {
 
   // Yes, Buffer.from is necessary here. The full size of the buffer is written if it's omitted instead of only the filled portion.
   fs.writeFileSync("sdcard/beatstar/scores", Buffer.from(writer.getBuffer()));
+};
+
+export const readLocalScores = () => {
+  const scores: Score[] = [];
+  const buffer = fs.readFileSync("sdcard/beatstar/scores") as Buffer;
+  const reader = new BufferedReader(buffer);
+  const scoreCount = reader.readInt();
+  for (var i = 0; i < scoreCount; i++) {
+    scores.push({
+      beatmapId: reader.readInt(),
+      score: reader.readInt(),
+    });
+  }
+  setScores(scores);
 };

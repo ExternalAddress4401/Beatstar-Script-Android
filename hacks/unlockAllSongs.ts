@@ -1,4 +1,4 @@
-import { customSongs, scores } from "../lib/Globals.js";
+import { scores } from "../lib/Globals.js";
 import { scoreToMedal } from "../lib/Utilities.js";
 import { activateMod } from "../utilities/activateMod.js";
 
@@ -50,9 +50,6 @@ export const unlockAllSongs = () => {
         }
       });
     const gradingSystem = Il2Cpp.gc.choose(metalogic.class("GradingSystem"))[0];
-    const profile = Il2Cpp.gc.choose(
-      RakshaModel.class("com.spaceape.flamingo.model.PlayerTO")
-    )[0];
 
     const beatmaps = Il2Cpp.gc.choose(
       RakshaModel.class("com.spaceape.flamingo.model.BeatmapTO")
