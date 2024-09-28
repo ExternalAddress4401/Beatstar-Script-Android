@@ -11,7 +11,9 @@ import { hookGraphics } from "../hacks/graphics.js";
 Il2Cpp.perform(async () => {
   await getScores();
   Device.toast(
-    offline ? `Mod loaded with ${scores.length} scores.` : "Mod loaded offline."
+    !offline
+      ? `Mod loaded with ${scores.length} scores.`
+      : "Mod loaded offline."
   );
   unlockAllSongs();
   unlockCustomSongs();
