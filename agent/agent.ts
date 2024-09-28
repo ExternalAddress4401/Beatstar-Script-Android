@@ -105,7 +105,7 @@ Il2Cpp.perform(async () => {
       Device.toast("Server looks to be down.");
       break;
   }
-});
+}, "main");
 
 const showLoginScreen = () => {
   const loginRuntime = Il2Cpp.domain.assembly("SpaceApe.Login.Runtime").image;
