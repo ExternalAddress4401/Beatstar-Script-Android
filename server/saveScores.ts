@@ -5,6 +5,7 @@ import Beatcharts from "../lib/Beatcharts.js";
 import { deviceNetworkRequest } from "../lib/Utilities.js";
 import Device from "../lib/Device.js";
 import Logger from "../lib/Logger.js";
+import { writeScores } from "../utilities/getScores.js";
 
 export const saveScores = () => {
   const assembly = Il2Cpp.domain.assembly("Assembly-CSharp").image;
@@ -63,6 +64,15 @@ export const saveScores = () => {
         });
       }
 
+      // Does the score exist locally?
+      const s = scores.find((score) => score.beatmapId === beatmapId);
+      if (!s) {
+        scores.push({
+          beatmapId,
+          score: absoluteScore,
+        });
+      }
+
       // Update local scores
       setScores(
         scores.map((score) =>
@@ -75,6 +85,7 @@ export const saveScores = () => {
             : score
         )
       );
+      writeScores(JSON.stringify(scores));
     }
 
     return this.method("ShowResults").invoke(result);

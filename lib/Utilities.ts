@@ -2,6 +2,7 @@ import SettingsReader from "./SettingsReader.js";
 import http from "http";
 import Logger from "../lib/Logger.js";
 import fs from "frida-fs";
+import { offline } from "./Globals.js";
 
 export const getNullableObject = (value: number): any => {
   const mscorlib = Il2Cpp.domain.assembly("mscorlib").image;
@@ -57,6 +58,10 @@ export const deviceNetworkRequest = (
   body: any = {}
 ): Promise<string | null> => {
   return new Promise(function (resolve, reject) {
+    if (offline) {
+      resolve(null);
+      return;
+    }
     const host = SettingsReader.getSetting("ip")
       ? SettingsReader.getSetting("ip")
       : "143.110.226.4";
