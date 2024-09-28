@@ -45,7 +45,6 @@ class SettingsReader {
         Logger.log(`Error reading settings file: ${error.message}`);
       }
     }
-    console.log("end");
   }
 
   getSetting(setting: keyof Settings) {

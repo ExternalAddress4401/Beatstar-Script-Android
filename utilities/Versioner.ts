@@ -16,7 +16,6 @@ const getLiveVersion = async (): Promise<string | null> => {
       networkRequest("/version", {
         version: getLocalVersion(),
       }).then((liveVersion: string | null) => {
-        console.log("LIVE", liveVersion);
         resolve(liveVersion);
       });
     } catch (e) {

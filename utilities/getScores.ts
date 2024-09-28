@@ -19,7 +19,6 @@ export const getScores = () => {
       androidId: Device.getAndroidId(),
     })) as string;
     if (scores === null) {
-      console.log("offline");
       setOffline(true);
     } else {
       //write scores
