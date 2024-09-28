@@ -1,5 +1,5 @@
 import Device from "../lib/Device";
-import { setScores } from "../lib/Globals";
+import { setOffline, setScores } from "../lib/Globals";
 import Logger from "../lib/Logger";
 import { deviceNetworkRequest } from "../lib/Utilities";
 
@@ -14,8 +14,12 @@ export const getScores = () => {
     const scores = (await deviceNetworkRequest("/getScores", {
       androidId: Device.getAndroidId(),
     })) as string;
-    Logger.log(`Scores: ${JSON.stringify(scores)}`);
-    setScores(JSON.parse(scores));
+    if (scores === null) {
+      setOffline(true);
+    } else {
+      Logger.log(`Scores: ${JSON.stringify(scores)}`);
+      setScores(JSON.parse(scores));
+    }
     resolve();
   });
 };

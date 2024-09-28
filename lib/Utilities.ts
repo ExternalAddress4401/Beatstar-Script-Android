@@ -55,7 +55,7 @@ export const writeFileToDevice = (fileName: string, data: string) => {
 export const deviceNetworkRequest = (
   path: string,
   body: any = {}
-): Promise<string> => {
+): Promise<string | null> => {
   return new Promise(function (resolve, reject) {
     const host = SettingsReader.getSetting("ip")
       ? SettingsReader.getSetting("ip")
@@ -89,7 +89,14 @@ export const deviceNetworkRequest = (
       conn.setDoOutput(true);
       conn.setChunkedStreamingMode(0);
 
-      const os = conn.getOutputStream();
+      let os;
+      try {
+        os = conn.getOutputStream();
+      } catch (e) {
+        resolve(null);
+        return;
+      }
+
       const out = BufferedOutputStream.$new(os);
       const osw = OutputStreamWriter.$new(
         out,
@@ -153,6 +160,11 @@ export const networkRequest = (path: string, data: object = {}): any => {
         res.on("end", (d: any) => {
           resolve(result);
         });
+      });
+
+      req.on("error", (error) => {
+        Logger.log(error.toString());
+        resolve(null);
       });
 
       req.write(JSON.stringify(data));

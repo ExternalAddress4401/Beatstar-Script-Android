@@ -1,4 +1,4 @@
-import { customSongs } from "../lib/Globals.js";
+import { customSongs, offline } from "../lib/Globals.js";
 import { getStatus } from "../functions/autoplay.js";
 import SettingsReader from "../lib/SettingsReader.js";
 import Beatcharts from "../lib/Beatcharts.js";
@@ -36,7 +36,8 @@ export const saveScores = () => {
           }*/
 
     //don't send custom scores to database
-    let shouldSave = getStatus() === "Autoplay enabled" ? false : true;
+    let shouldSave =
+      offline || getStatus() === "Autoplay enabled" ? false : true;
 
     for (var x = 0; x < customSongs.length; x++) {
       const customSongId = customSongs[x].template.field("id").value;

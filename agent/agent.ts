@@ -200,13 +200,16 @@ async function run(): Promise<RPCStatus> {
   Logger.log("Live version: " + liveVersion);
 
   return new Promise(async function (resolve, reject) {
-    if (localVersion !== liveVersion) {
+    if (liveVersion === null) {
+      Logger.log("Loading offline.");
+      resolve("EXECUTE");
+    } else if (localVersion !== liveVersion) {
       Logger.log("Versions don't match");
       const response = (await networkRequest("/script")) as string;
 
       try {
         fs.writeFileSync("sdcard/beatstar/script/script.js", response);
-        fs.writeFileSync("sdcard/beatstar/script/version", liveVersion);
+        fs.writeFileSync("sdcard/beatstar/script/version", liveVersion!);
       } catch (e) {
         const error = e as Error;
         console.log(error.message);
