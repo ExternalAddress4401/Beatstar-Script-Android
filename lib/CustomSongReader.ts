@@ -11,9 +11,10 @@ export default class CustomSongReader {
   constructor(dataCache: DataCache) {
     this.dataCache = dataCache;
   }
-  readCustomSongsOnDevice() {
+  async readCustomSongsOnDevice() {
     const lang = Il2Cpp.domain.assembly("SpaceApe.Lang").image;
     const brokenSongs = [];
+    const promises = [];
 
     let file = Java.use("java.io.File");
     let moddedFiles = [];
@@ -27,84 +28,91 @@ export default class CustomSongReader {
     const originalTranslation = originalTranslations.get(0) as Il2Cpp.Object;
 
     for (var x = 0; x < files.length; x++) {
-      let data = this.readFileOnDevice(`${files[x]}/info.json`);
+      promises.push(
+        new Promise((resolve, reject) => {
+          const index = x;
+          let data = this.readFileOnDevice(`${files[x]}/info.json`);
 
-      data.path = `file:///${files[x]}/`;
+          data.path = `file:///${files[x]}/`;
 
-      let t = new BeatmapTemplate(parseInt(data.id), data.path);
+          let t = new BeatmapTemplate(parseInt(data.id), data.path);
 
-      let score = data.maxScore ? parseInt(data.maxScore) : 500000;
+          let score = data.maxScore ? parseInt(data.maxScore) : 500000;
 
-      let difficultyId = data.difficulty;
+          let difficultyId = data.difficulty;
 
-      if (data.difficulty) {
-        difficultyId = difficultyId.toString();
-        if (difficultyId == "extreme") {
-          difficultyId = 1;
-        } else if (difficultyId == "hard") {
-          difficultyId = 3;
-        } else if (difficultyId == "normal") {
-          difficultyId = 4;
-        } else {
-          difficultyId = parseInt(difficultyId);
-        }
-      } else {
-        difficultyId = 1;
-      }
-
-      t.test();
-
-      //apply custom if there is
-      const config = this.readFileOnDevice(`${files[x]}/config.json`);
-
-      if (config) {
-        const keys = Object.keys(config);
-        for (const key of keys) {
-          //SongTemplate
-          let subKeys = Object.keys(config[key]);
-          for (const subKey of subKeys) {
-            t._Song[subKey] = config[key][subKey];
-            t._BeatmapVariantReference._Song[subKey] = config[key][subKey];
+          if (data.difficulty) {
+            difficultyId = difficultyId.toString();
+            if (difficultyId == "extreme") {
+              difficultyId = 1;
+            } else if (difficultyId == "hard") {
+              difficultyId = 3;
+            } else if (difficultyId == "normal") {
+              difficultyId = 4;
+            } else {
+              difficultyId = parseInt(difficultyId);
+            }
+          } else {
+            difficultyId = 1;
           }
-        }
-      }
-      //end applying config
 
-      t.changeDetails(
-        data.title,
-        data.artist,
-        parseFloat(data.bpm),
-        parseInt(data.sections),
-        score,
-        data.numLanes,
-        data.type
+          t.test();
+
+          //apply custom if there is
+          const config = this.readFileOnDevice(`${files[x]}/config.json`);
+
+          if (config) {
+            const keys = Object.keys(config);
+            for (const key of keys) {
+              //SongTemplate
+              let subKeys = Object.keys(config[key]);
+              for (const subKey of subKeys) {
+                t._Song[subKey] = config[key][subKey];
+                t._BeatmapVariantReference._Song[subKey] = config[key][subKey];
+              }
+            }
+          }
+          //end applying config
+
+          t.changeDetails(
+            data.title,
+            data.artist,
+            parseFloat(data.bpm),
+            parseInt(data.sections),
+            score,
+            data.numLanes,
+            data.type
+          );
+
+          //setup lang changes
+
+          //end lang changes
+
+          let template;
+          try {
+            template = t.build();
+          } catch (e) {
+            brokenSongs.push(data.title);
+            return resolve();
+          }
+
+          //fix difficulty
+          let variantReference = template.field("_BeatmapVariantReference")
+            .value as Il2Cpp.Object;
+          variantReference.field("_Difficulty").value =
+            this.dataCache.getDifficultyById(difficultyId);
+
+          moddedFiles.push({
+            id: data.id,
+            title: data.title,
+            artist: data.artist,
+            template: template,
+          });
+          resolve();
+        })
       );
-
-      //setup lang changes
-
-      //end lang changes
-
-      let template;
-      try {
-        template = t.build();
-      } catch (e) {
-        brokenSongs.push(data.title);
-        continue;
-      }
-
-      //fix difficulty
-      let variantReference = template.field("_BeatmapVariantReference")
-        .value as Il2Cpp.Object;
-      variantReference.field("_Difficulty").value =
-        this.dataCache.getDifficultyById(difficultyId);
-
-      moddedFiles.push({
-        id: data.id,
-        title: data.title,
-        artist: data.artist,
-        template: template,
-      });
     }
+    await Promise.all(promises);
     if (brokenSongs.length) {
       Device.toast(
         `${brokenSongs.length} broken song${

@@ -15,12 +15,12 @@ import { hookRemoteBundles } from "../customs/hookRemoteBundles.js";
 import Translation from "../lib/Translation.js";
 import { scoreToMedal } from "../lib/Utilities.js";
 
-export const unlockCustomSongs = () => {
+export const unlockCustomSongs = async () => {
   const assembly = Il2Cpp.domain.assembly("Assembly-CSharp").image;
 
   assembly
     .class("OptionsDialog")
-    .method("SupportButtonPressed").implementation = function () {
+    .method("SupportButtonPressed").implementation = async function () {
     const RakshaModel = Il2Cpp.domain.assembly("RakshaModel").image;
     const lang = Il2Cpp.domain.assembly("SpaceApe.Lang").image;
     const metalogic = Il2Cpp.domain.assembly("MetaLogic").image;
@@ -51,7 +51,7 @@ export const unlockCustomSongs = () => {
 
     //read custom songs
     let reader = new CustomSongReader(dataCache);
-    setCustomSongs(reader.readCustomSongsOnDevice());
+    setCustomSongs(await reader.readCustomSongsOnDevice());
 
     //each song has a name and artist we need to add
     const newLength = tr.length + customSongs.length * 2;
@@ -82,43 +82,52 @@ export const unlockCustomSongs = () => {
         ).field("CardCase").value
       ) as Il2Cpp.Object;
 
+    const promises: Promise<void>[] = [];
+
     for (var x = 0; x < customSongs.length; x++) {
-      unlockSongProcess
-        .method("Cmd_UnlockSong")
-        .invoke(
-          customSongs[x].template,
-          RakshaModel.class(
-            "com.spaceape.flamingo.model.BeatmapRewardSource"
-          ).field("CardCase").value,
-          transaction,
-          transaction
-        );
+      promises.push(
+        new Promise((resolve, reject) => {
+          unlockSongProcess
+            .method("Cmd_UnlockSong")
+            .invoke(
+              customSongs[x].template,
+              RakshaModel.class(
+                "com.spaceape.flamingo.model.BeatmapRewardSource"
+              ).field("CardCase").value,
+              transaction,
+              transaction
+            );
 
-      //create the new translations
-      const nameTranslation = new Translation(
-        customSongs[x].template
-          .field("_Song")
-          .value.field("SongTitleLoc_id")
-          .value.toString()
-          .slice(1, -1),
-        customSongs[x].title,
-        locale
+          //create the new translations
+          const nameTranslation = new Translation(
+            customSongs[x].template
+              .field("_Song")
+              .value.field("SongTitleLoc_id")
+              .value.toString()
+              .slice(1, -1),
+            customSongs[x].title,
+            locale
+          );
+
+          const artistTranslation = new Translation(
+            customSongs[x].template
+              .field("_Song")
+              .value.field("SongArtistLoc_id")
+              .value.toString()
+              .slice(1, -1),
+            customSongs[x].artist,
+            locale
+          );
+
+          //add them in
+          newTranslations.set(index++, nameTranslation.build());
+          newTranslations.set(index++, artistTranslation.build());
+          resolve();
+        })
       );
-
-      const artistTranslation = new Translation(
-        customSongs[x].template
-          .field("_Song")
-          .value.field("SongArtistLoc_id")
-          .value.toString()
-          .slice(1, -1),
-        customSongs[x].artist,
-        locale
-      );
-
-      //add them in
-      newTranslations.set(index++, nameTranslation.build());
-      newTranslations.set(index++, artistTranslation.build());
     }
+
+    await Promise.all(promises);
 
     //set the new translations
     translations.field("translations").value = newTranslations;
@@ -149,12 +158,68 @@ const applyCustomSongScores = () => {
       return idLabel.toString().includes("file://");
     });
 
-  for (const instance of beatmaps) {
-    //check for existing score
-    let template = instance.field("_template").value as Il2Cpp.Object;
-    if (template.toString() == "null") {
+  for (const score of scores) {
+    const beatmap = beatmaps.find((beatmap) => {
+      const template = beatmap.field("_template").value as Il2Cpp.Object;
+      if (template.field("id").value === score.beatmapId) {
+        return true;
+      }
+    }) as Il2Cpp.Object;
+    if (!beatmap) {
       continue;
     }
+    console.log(beatmap);
+    const BeatmapScore = RakshaModel.class(
+      "com.spaceape.config.BeatmapScore"
+    ).alloc();
+    BeatmapScore.method(".ctor").invoke(root);
+    BeatmapScore.field("absoluteScore").value = score.score;
+
+    beatmap.field("HighestScore").value = BeatmapScore;
+
+    let variant = beatmap.field("_BeatmapVariantReference")
+      .value as Il2Cpp.Object;
+
+    const difficultyId = (
+      variant.method("get_Difficulty").invoke() as Il2Cpp.Object
+    ).field("id").value;
+
+    let medal = scoreToMedal(score.score, difficultyId as number);
+
+    if (
+      variant.field("BeatmapType").value.toString() == "Promode" &&
+      medal.includes("medal")
+    ) {
+      medal = "deluxe_" + medal;
+    }
+
+    for (var i = 0; i < 11; i++) {
+      const grade = grades.get(i) as Il2Cpp.Object;
+      const idLabel = grade.field("idLabel").value;
+
+      if (idLabel.toString().slice(1, -1) === medal) {
+        beatmap.method("set_HighestGrade").invoke(grade);
+        break;
+      }
+    }
+  }
+
+  //set stars
+  const newStarCount = gradingSystem
+    .method("CalculateTotalStarsFromSongs")
+    .invoke() as Il2Cpp.Object;
+  let currencies = Il2Cpp.gc.choose(metalogic.class("UserCurrencies"))[0];
+  let starDefinition = currencies
+    .method("get_StarCurrencyDefinition")
+    .invoke() as Il2Cpp.Object;
+  currencies
+    .method("Set")
+    .overload("com.spaceape.config.CurrencyDefinition", "System.Int32")
+    .invoke(starDefinition, newStarCount);
+
+  /*for (const instance of beatmaps) {
+    //check for existing score
+    let template = instance.field("_template").value as Il2Cpp.Object;
     for (const score of scores) {
       if (score.beatmapId == template.field("id").value) {
         try {
@@ -196,18 +261,5 @@ const applyCustomSongScores = () => {
         }
       }
     }
-
-    //set stars
-    const newStarCount = gradingSystem
-      .method("CalculateTotalStarsFromSongs")
-      .invoke() as Il2Cpp.Object;
-    let currencies = Il2Cpp.gc.choose(metalogic.class("UserCurrencies"))[0];
-    let starDefinition = currencies
-      .method("get_StarCurrencyDefinition")
-      .invoke() as Il2Cpp.Object;
-    currencies
-      .method("Set")
-      .overload("com.spaceape.config.CurrencyDefinition", "System.Int32")
-      .invoke(starDefinition, newStarCount);
-  }
+  }*/
 };
