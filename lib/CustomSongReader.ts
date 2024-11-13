@@ -2,14 +2,18 @@
 
 import BeatmapTemplate from "./BeatmapTemplate.js";
 import DataCache from "./DataCache.js";
+import Device from "./Device.js";
+import Logger from "./Logger.js";
 
 export default class CustomSongReader {
   dataCache: DataCache;
+
   constructor(dataCache: DataCache) {
     this.dataCache = dataCache;
   }
   readCustomSongsOnDevice() {
     const lang = Il2Cpp.domain.assembly("SpaceApe.Lang").image;
+    const brokenSongs = [];
 
     let file = Java.use("java.io.File");
     let moddedFiles = [];
@@ -80,7 +84,13 @@ export default class CustomSongReader {
 
       //end lang changes
 
-      let template = t.build();
+      let template;
+      try {
+        template = t.build();
+      } catch (e) {
+        brokenSongs.push(data.title);
+        continue;
+      }
 
       //fix difficulty
       let variantReference = template.field("_BeatmapVariantReference")
@@ -94,6 +104,14 @@ export default class CustomSongReader {
         artist: data.artist,
         template: template,
       });
+    }
+    if (brokenSongs.length) {
+      Device.toast(
+        `${brokenSongs.length} broken song${
+          brokenSongs.length === 1 ? "" : "s"
+        } detected. See log for names.`
+      );
+      Logger.log("Broken songs: " + brokenSongs.join(", "));
     }
     return moddedFiles;
   }
