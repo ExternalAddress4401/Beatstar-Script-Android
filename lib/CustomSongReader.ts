@@ -58,7 +58,7 @@ export default class CustomSongReader {
 
           t.test();
 
-          //apply custom if there is
+          //apply custom cofig if there is
           const config = this.readFileOnDevice(`${files[x]}/config.json`);
 
           if (config) {
@@ -83,10 +83,6 @@ export default class CustomSongReader {
             data.numLanes,
             data.type
           );
-
-          //setup lang changes
-
-          //end lang changes
 
           let template;
           try {

@@ -168,7 +168,9 @@ const applyCustomSongScores = () => {
     if (!beatmap) {
       continue;
     }
-    console.log(beatmap);
+
+    const template = beatmap.field("_template").value;
+
     const BeatmapScore = RakshaModel.class(
       "com.spaceape.config.BeatmapScore"
     ).alloc();
@@ -177,7 +179,7 @@ const applyCustomSongScores = () => {
 
     beatmap.field("HighestScore").value = BeatmapScore;
 
-    let variant = beatmap.field("_BeatmapVariantReference")
+    let variant = template.field("_BeatmapVariantReference")
       .value as Il2Cpp.Object;
 
     const difficultyId = (
