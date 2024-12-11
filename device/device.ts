@@ -8,8 +8,10 @@ import { getScores, readLocalScores } from "../utilities/getScores.js";
 import { scores, setOffline } from "../lib/Globals.js";
 import { hookGraphics } from "../hacks/graphics.js";
 import SettingsReader from "../lib/SettingsReader.js";
+import { fakeVersion } from "../functions/fakeVersion.js";
 
 Il2Cpp.perform(async () => {
+  fakeVersion();
   const offline = SettingsReader.getSetting("offline");
   if (offline) {
     setOffline(true);
