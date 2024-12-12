@@ -1,6 +1,5 @@
 //@ts-nocheck
 
-import { getNullableObject } from "./Utilities.js";
 import SongTemplate from "./SongTemplate.js";
 import BeatmapVariant from "./BeatmapVariant.js";
 
@@ -38,17 +37,15 @@ export default class BeatmapTemplate {
       "com.spaceape.config.BeatmapTemplate"
     ).alloc();
     template.method(".ctor").invoke(root);
-
     template.field("id").value = this.id;
     template.field("availability").value = RakshaModel.class(
       "com.spaceape.config.BeatmapAvailability"
     ).field("OutsideCampaign").value;
-    template.field("Song_id").value = getNullableObject(this.Song_id);
+    template.field("Song_id").value = this.Song_id;
     template.field("_Song").value = this._Song.build();
     template.field("idLabel").value = Il2Cpp.string(this.idLabel);
-    template.field("BeatmapVariantReference_id").value = getNullableObject(
-      this.BeatmapVariantReference_id
-    );
+    template.field("BeatmapVariantReference_id").value =
+      this.BeatmapVariantReference_id;
     template.field("_BeatmapVariantReference").value =
       this._BeatmapVariantReference.build();
 

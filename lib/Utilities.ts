@@ -4,22 +4,6 @@ import Logger from "../lib/Logger.js";
 import fs from "frida-fs";
 import { offline } from "./Globals.js";
 
-export const getNullableObject = (value: number): any => {
-  const mscorlib = Il2Cpp.domain.assembly("mscorlib").image;
-  const NullableInt32 = mscorlib
-    .class("System.Nullable`1")
-    .inflate(mscorlib.class("System.UInt32"));
-
-  const struct = new Il2Cpp.ValueType(
-    Il2Cpp.alloc(NullableInt32.valueSize),
-    NullableInt32.type
-  );
-  struct.field("value").value = value;
-  struct.field("hasValue").value = true;
-
-  return struct;
-};
-
 export const readFileOnDevice = (
   fileName: string,
   root: boolean = false

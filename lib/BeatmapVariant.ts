@@ -5,7 +5,6 @@ import SongDifficulty from "./SongDifficulty.js";
 import UnityAsset from "./UnityAsset.js";
 import AnimationCurveTO from "./AnimationCurveTO.js";
 import BeatmapType, { BeatmapTypeEnum } from "./BeatmapType.js";
-import { getNullableObject } from "./Utilities.js";
 
 export default class BeatmapVariant {
   id: number;
@@ -46,20 +45,17 @@ export default class BeatmapVariant {
 
     template.field("id").value = this.id;
     template.field("idLabel").value = Il2Cpp.string(this.idLabel);
-    template.field("Song_id").value = getNullableObject(this.Song_id);
+    template.field("Song_id").value = this.Song_id;
     template.field("_Song").value = this._Song.build();
     template.field("MaxNumLanes").value = this.MaxNumLanes;
     template.field("MaxScore").value = this.MaxScore; //to be calculated
 
-    template.field("Difficulty_id").value = getNullableObject(
-      this.Difficulty_id
-    );
+    template.field("Difficulty_id").value = this.Difficulty_id;
     template.field("_Difficulty").value = this._Difficulty.build();
     template.field("Version").value = this.Version;
     template.field("IsComplete").value = this.IsComplete;
-    template.field("InteractionsReference_id").value = getNullableObject(
-      this.InteractionsReference_id
-    );
+    template.field("InteractionsReference_id").value =
+      this.InteractionsReference_id;
     if (this._InteractionsReference) {
       template.field("_InteractionsReference").value =
         this._InteractionsReference;
