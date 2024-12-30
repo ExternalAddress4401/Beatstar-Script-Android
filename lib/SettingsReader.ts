@@ -26,6 +26,7 @@ interface Settings {
   fps?: number;
   forceLogin?: string;
   offline?: string;
+  fakeVersion?: string;
 }
 
 class SettingsReader {

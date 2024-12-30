@@ -11,7 +11,9 @@ import SettingsReader from "../lib/SettingsReader.js";
 import { fakeVersion } from "../functions/fakeVersion.js";
 
 Il2Cpp.perform(async () => {
-  fakeVersion();
+  if (SettingsReader.getSetting("fakeVersion")) {
+    fakeVersion();
+  }
   const offline = SettingsReader.getSetting("offline");
   if (offline) {
     setOffline(true);
