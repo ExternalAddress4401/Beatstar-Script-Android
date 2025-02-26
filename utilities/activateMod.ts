@@ -22,7 +22,6 @@ export const activateMod = () => {
   unlockAllSkins();
   noFail();
   autoplay();
-  search();
   forcePlayableSongs();
   disableTutorial();
   disableNews();

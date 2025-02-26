@@ -27,6 +27,7 @@ interface Settings {
   forceLogin?: string;
   offline?: string;
   fakeVersion?: string;
+  alternateUnlock?: string;
 }
 
 class SettingsReader {

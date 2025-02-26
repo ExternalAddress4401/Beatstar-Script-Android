@@ -4,6 +4,8 @@ import * as autoplay from "./autoplay.js";
 import Device from "../lib/Device.js";
 import { deviceNetworkRequest, writeFileToDevice } from "../lib/Utilities.js";
 import { encryptAndroidId } from "../server/encryptAndroidId.js";
+import SettingsReader from "../lib/SettingsReader.js";
+import { unlockAllSongs } from "../utilities/unlockAllSongs.js";
 
 export const search = () => {
   const assembly = Il2Cpp.domain.assembly("Assembly-CSharp").image;
@@ -11,6 +13,7 @@ export const search = () => {
   assembly
     .class("SongCollection_SearchElement")
     .method("UpdateInputFilledState").implementation = function () {
+    console.log(SettingsReader.getSetting("alternateUnlock"));
     const input = this.field("inputField").value as Il2Cpp.Object;
     const text = input.field("m_Text").value as Il2Cpp.String;
     const searchTerm = text.toString().slice(1, -1);
@@ -23,6 +26,11 @@ export const search = () => {
       Device.toast(autoplay.getStatus());
     } else if (searchTerm == "link") {
       Device.toast(Device.getAndroidId());
+    } else if (
+      searchTerm == "unlock" &&
+      SettingsReader.getSetting("alternateUnlock") === "true"
+    ) {
+      unlockAllSongs();
     } /*else if (searchTerm.endsWith("link")) {
       const username = searchTerm.split(" ").slice(0, -1).join(" ");
       if (username.trim().length === 0) {
