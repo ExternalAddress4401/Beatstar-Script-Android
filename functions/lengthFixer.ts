@@ -1,32 +1,4 @@
 import Logger from "../lib/Logger";
-import fs from "frida-fs";
-
-const cm = new CModule(`
-#include <gum/guminterceptor.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
-
-
-uint8_t* datahex(char* arr) {
-    size_t slength = strlen(arr);
-
-    for(int i = 0; i < slength; i++) {
-      if(arr[i] == 97 && arr[i+1] == 85 && arr[i+2] == 85 && arr[i+3] == 213 && arr[i+4] == 71 && arr[i+5] == 34 && arr[i+6] == 0 && arr[i+7] == 65) {
-        arr[i] = 0;
-        arr[i+1] = 0;
-        arr[i+2] = 0;
-        arr[i+3] = 0;
-        arr[i+4] = 136;
-        arr[i+5] = 42;
-        arr[i+6] = 113;
-        arr[i+7] = 65;
-      }
-    }
-
-    return arr;
-}`);
 
 /**
  * Fixes the length of custom songs so they play forever
@@ -53,6 +25,8 @@ export const lengthFixer = () => {
             .overload("System.String", "System.String")
             .invoke(Il2Cpp.string("-"), Il2Cpp.string("")) as Il2Cpp.String;
 
+          let copy = strr.content;
+
           strr = strr.object
             .method("Replace")
             .overload("System.String", "System.String")
@@ -60,8 +34,6 @@ export const lengthFixer = () => {
               Il2Cpp.string("615555D547220041"),
               Il2Cpp.string("00000000882A7141")
             ) as Il2Cpp.String;
-
-          Logger.log("Replaced first");
 
           strr = strr.object
             .method("Replace")
@@ -71,12 +43,16 @@ export const lengthFixer = () => {
               Il2Cpp.string("00000000882A7141")
             ) as Il2Cpp.String;
 
-          const first = strr.content.slice(0, strr.content.length);
+          // for some reason the regex replaces can drop bytes off the end...
+          if (strr.content.length !== copy.length) {
+            strr.content =
+              strr.content + copy.slice(strr.content.length, copy.length);
+          }
 
           const result = assembly
             .class("BeatStar.AppsFlyer.AppsFlyerSetup")
             .method("StringToByteArray")
-            .invoke(Il2Cpp.string(first));
+            .invoke(Il2Cpp.string(strr.content));
 
           return result;
         } catch (e) {
