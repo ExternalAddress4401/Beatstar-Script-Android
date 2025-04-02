@@ -11,8 +11,10 @@ import { search } from "../functions/search.js";
 import { forcePlayableSongs } from "../hacks/forcePlayableSongs.js";
 import { disableTutorial } from "../functions/disableTutorial.js";
 import { disableNews } from "../functions/disableNews.js";
+import { saveUserame } from "./saveUsername.js";
 
 export const activateMod = () => {
+  saveUserame();
   killErrorHandler();
   disableChecksum();
   customColors();
