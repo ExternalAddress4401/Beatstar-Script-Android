@@ -2,15 +2,16 @@ import Device from "../lib/Device";
 import { deviceNetworkRequest } from "../lib/Utilities";
 
 export const saveUserame = () => {
-  const assembly = Il2Cpp.domain.assembly("Assembly-CSharp").image;
+  const raksha = Il2Cpp.domain.assembly("RakshaModel").image;
 
-  const logger = Il2Cpp.gc.choose(
-    assembly.class("BeatStar.Logging.GameLogstashLogger")
+  const player = Il2Cpp.gc.choose(
+    raksha.class("com.spaceape.flamingo.model.PlayerTO")
   )[0];
-  const username = logger.method("get_PlayerName").invoke();
+  const username = player.field("name").value;
+  const discriminator = player.field("nameUid").value;
 
   deviceNetworkRequest("/update", {
-    username: username.content,
+    username: username.content + "#" + discriminator,
     androidId: Device.getAndroidId(),
   });
 };
