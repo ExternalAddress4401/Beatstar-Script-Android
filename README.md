@@ -19,7 +19,7 @@ Notes:
 
 - APKTool: https://apktool.org/
 - NodeJS: https://nodejs.org/en
-- Objection: [https://www.npmjs.com/package/objection](https://github.com/sensepost/objection) (`pip3 install objection`)
+- Objection: https://github.com/sensepost/objection (`pip3 install objection`)
 - Uber APK Patcher: https://github.com/patrickfav/uber-apk-signer
 
 1. Download a Beatstar APK or pull the APK from your device. https://beatstar.en.uptodown.com/android is a good source and save it as `beatstar.apk`
