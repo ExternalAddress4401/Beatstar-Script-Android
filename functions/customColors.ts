@@ -45,6 +45,7 @@ export const customColors = () => {
     }
     return result;
   };
+
   assembly
     .class("BeatStar.RhythmGame.RhythmGameColours")
     .method("GetFeedbackTextColourForScore").implementation = function (

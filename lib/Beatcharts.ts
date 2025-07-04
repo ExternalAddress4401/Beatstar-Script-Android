@@ -1,5 +1,6 @@
 import { getStatus as getAutoplayStatus } from "../functions/autoplay.js";
 import { getStatus as getNoFailStatus } from "../functions/noFail.js";
+import Java from "frida-java-bridge";
 
 interface Song {
   id: number;

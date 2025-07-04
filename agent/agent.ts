@@ -1,4 +1,5 @@
 import "frida-il2cpp-bridge";
+import Java from "frida-java-bridge";
 import Logger from "../lib/Logger.js";
 import SettingsReader from "../lib/SettingsReader.js";
 import Device from "../lib/Device.js";

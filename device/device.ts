@@ -1,5 +1,4 @@
 import "frida-il2cpp-bridge";
-
 import Device from "../lib/Device.js";
 import { lengthFixer } from "../functions/lengthFixer.js";
 import { unlockCustomSongs } from "../hacks/unlockCustomSongs.js";

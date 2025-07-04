@@ -1,9 +1,9 @@
 import * as nofail from "./noFail.js";
 import * as autoplay from "./autoplay.js";
 
+import Java from "frida-java-bridge";
 import Device from "../lib/Device.js";
-import { deviceNetworkRequest, writeFileToDevice } from "../lib/Utilities.js";
-import { encryptAndroidId } from "../server/encryptAndroidId.js";
+import { writeFileToDevice } from "../lib/Utilities.js";
 import SettingsReader from "../lib/SettingsReader.js";
 import { unlockAllSongs } from "../utilities/unlockAllSongs.js";
 

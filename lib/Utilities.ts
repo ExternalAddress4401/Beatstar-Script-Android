@@ -1,8 +1,9 @@
 import SettingsReader from "./SettingsReader.js";
-import http from "http";
+import http from "@frida/http";
 import Logger from "../lib/Logger.js";
 import fs from "frida-fs";
 import { offline } from "./Globals.js";
+import Java from "frida-java-bridge";
 
 export const readFileOnDevice = (
   fileName: string,
@@ -141,8 +142,8 @@ export const networkRequest = (path: string, data: object = {}): any => {
 
   return new Promise(function (resolve) {
     try {
-      const req = http.request(options, (res) => {
-        res.on("data", (d) => {
+      const req = http.request(options, (res: any) => {
+        res.on("data", (d: any) => {
           result += d;
         });
 
@@ -151,7 +152,7 @@ export const networkRequest = (path: string, data: object = {}): any => {
         });
       });
 
-      req.on("error", (error) => {
+      req.on("error", (error: Buffer) => {
         Logger.log(error.toString());
         resolve(null);
       });

@@ -1,3 +1,5 @@
+import Java from "frida-java-bridge";
+
 class Device {
   static getDeviceLanguage() {
     return Java.use("android.content.res.Resources")

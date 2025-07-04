@@ -6,6 +6,8 @@ const getLocalVersion = () => {
   try {
     return fs.readFileSync("sdcard/beatstar/script/version").toString();
   } catch (e) {
+    const error = e as Error;
+    Logger.log(`Failed to get local version: ${error.message}`);
     return "0.0.0.0";
   }
 };

@@ -1,5 +1,6 @@
 //@ts-nocheck
 
+import Java from "frida-java-bridge";
 import BeatmapTemplate from "./BeatmapTemplate.js";
 import DataCache from "./DataCache.js";
 import Device from "./Device.js";
@@ -15,9 +16,9 @@ export default class CustomSongReader {
     const lang = Il2Cpp.domain.assembly("SpaceApe.Lang").image;
     const brokenSongs = [];
     const promises = [];
+    const moddedFiles = [];
 
     let file = Java.use("java.io.File");
-    let moddedFiles = [];
     let files = file.$new("sdcard/beatstar/songs").listFiles();
 
     const langConfig = Il2Cpp.gc.choose(

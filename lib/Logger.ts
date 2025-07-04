@@ -1,3 +1,5 @@
+import Java from "frida-java-bridge";
+
 class Logger {
   constructor() {
     //empty the file

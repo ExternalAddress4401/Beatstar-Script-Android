@@ -1,5 +1,5 @@
-import Logger from "../lib/Logger";
 import SettingsReader from "../lib/SettingsReader";
+import Java from "frida-java-bridge";
 
 export const post = (
   path: string,
