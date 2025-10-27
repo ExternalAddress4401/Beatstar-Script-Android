@@ -14,8 +14,10 @@ export const customServer = () => {
     secret: Il2Cpp.String
   ) {
     const serverIp = SettingsReader.getSetting("serverIp");
-    host = serverIp ? Il2Cpp.string(serverIp) : host;
-    port = SettingsReader.getSetting("serverPort") ?? port;
+    host = serverIp
+      ? Il2Cpp.string(serverIp)
+      : Il2Cpp.string("beatstarmod.app");
+    port = SettingsReader.getSetting("serverPort") ?? 3000;
     Logger.log(`Using server: ${host}:${port}`);
     this.method(".ctor").invoke(host, port, name, secret);
     if (serverIp) {

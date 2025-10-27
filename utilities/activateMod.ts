@@ -6,11 +6,11 @@ import { forcePlayableSongs } from "../hacks/forcePlayableSongs.js";
 import { disableTutorial } from "../functions/disableTutorial.js";
 
 export const activateMod = () => {
-  disableChecksum();
+  //disableChecksum();
   //customColors();
   freeRestarts();
   noFail();
   autoplay();
-  forcePlayableSongs();
+  //forcePlayableSongs();
   disableTutorial();
 };

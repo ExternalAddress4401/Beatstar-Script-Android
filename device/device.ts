@@ -7,9 +7,12 @@ import { hookSupportButton } from "../hacks/hookSupportButton.js";
 import { customServer } from "../utilities/customServer.js";
 import { startAssetServer } from "../server/assets.js";
 import { hookCintaId } from "../private-server/hookCintaId.js";
+import { activateMod } from "../utilities/activateMod.js";
 
 Il2Cpp.perform(async () => {
   Device.toast("Mod loaded.");
+
+  activateMod();
   hookCintaId();
   startAssetServer();
   customServer();
