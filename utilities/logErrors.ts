@@ -1,5 +1,8 @@
 import Logger from "../lib/Logger";
 
+/**
+ * Logs various internal errors normally hidden from Logcat.
+ */
 export const logErrors = () => {
   const logger = Il2Cpp.domain
     .assembly("SpaceApe.Logger")

@@ -1,5 +1,8 @@
 import { setLastNote } from "../lib/Globals.js";
 
+/**
+ * Applies custom coloring to flick notes.
+ */
 export const hookLastNote = () => {
   const assembly = Il2Cpp.domain.assembly("Assembly-CSharp").image;
 

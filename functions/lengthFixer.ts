@@ -1,7 +1,7 @@
 import Logger from "../lib/Logger";
 
 /**
- * Fixes the length of custom songs so they play forever
+ * Fixes the length of custom songs so they play forever.
  */
 export const lengthFixer = () => {
   const coreModule = Il2Cpp.domain.assembly("UnityEngine.CoreModule").image;

@@ -4,7 +4,6 @@ import * as autoplay from "./autoplay.js";
 import Java from "frida-java-bridge";
 import Device from "../lib/Device.js";
 import { writeFileToDevice } from "../lib/Utilities.js";
-import { unlockAllSongs } from "../utilities/unlockAllSongs.js";
 import { unlockCustomSongs } from "../utilities/unlockCustomSongs.js";
 
 export const search = () => {
@@ -25,8 +24,6 @@ export const search = () => {
       Device.toast(autoplay.getStatus());
     } else if (searchTerm == "link") {
       Device.toast(Device.getAndroidId());
-    } else if (searchTerm == "unlock") {
-      unlockAllSongs();
     } else if (searchTerm == "cunlock") {
       unlockCustomSongs();
     } else if (searchTerm == "dump") {

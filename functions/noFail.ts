@@ -1,5 +1,8 @@
 let enabled = false;
 
+/**
+ * Disables failing. Missed notes will not stop scrolling.
+ */
 const noFail = () => {
   const assembly = Il2Cpp.domain.assembly("Assembly-CSharp").image;
 

@@ -7,8 +7,6 @@ import fs from "frida-fs";
 import { getLiveVersion, getLocalVersion } from "../utilities/Versioner.js";
 import { decrypt } from "../lib/Encrypter.js";
 import { Buffer } from "buffer";
-import { sleep } from "../utilities/sleep.js";
-import { isUndefined } from "../utilities/isUndefined.js";
 import {
   createDirectories,
   getJavaVersion,
@@ -75,16 +73,7 @@ rpc.exports = {
 };
 
 Il2Cpp.perform(async () => {
-  Java.perform(() => {
-    if (SettingsReader.getSetting("forceLogin") === "true") {
-      showLoginScreen();
-    }
-  });
   Logger.log(`Inside perform block with ${done}`);
-
-  createNewUser();
-
-  Logger.log("Finished init");
 
   if (!checkForStoragePermissions()) {
     return;
@@ -108,34 +97,8 @@ Il2Cpp.perform(async () => {
   }
 }, "main");
 
-const showLoginScreen = () => {
-  const loginRuntime = Il2Cpp.domain.assembly("SpaceApe.Login.Runtime").image;
-
-  loginRuntime.class("LoginPicker").method(".ctor").implementation = function (
-    a,
-    b,
-    c,
-    d
-  ) {
-    this.method(".ctor").invoke(a, b, c, d);
-    this.method("ShowPlayerLogin").invoke();
-  };
-};
-
-const createNewUser = () => {
-  Logger.log("Checking if it's out first time using the mod...");
-  networkRequest("/createAccount", { androidId: Device.getAndroidId() });
-};
-
 const shouldLoadScript = () => {
   return SettingsReader.getSetting("loadScript") !== "false";
-};
-
-const isServerModified = () => {
-  return (
-    !isUndefined(SettingsReader.getSetting("ip")) ||
-    !isUndefined(SettingsReader.getSetting("port"))
-  );
 };
 
 const hasLocalScript = () => {
@@ -167,26 +130,12 @@ const executeScript = async () => {
   }
 };
 
-const handleDelay = async () => {
-  const delay = SettingsReader.getSetting("delay") as number;
-  if (delay) {
-    await sleep(delay);
-  }
-  return;
-};
-
 async function run(): Promise<RPCStatus> {
   createDirectories();
   if (!shouldLoadScript()) {
     Logger.log("Not loading script due to settings file.");
     Device.toast("Not loading script due to settings file");
     return "NO_ACTION";
-  }
-  if (isServerModified()) {
-    Logger.log("Server is modified.");
-    Device.toast(
-      "Modified server configuration detected. Do not report bugs that occur from this."
-    );
   }
 
   if (hasLocalScript()) {

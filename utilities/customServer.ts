@@ -1,6 +1,9 @@
 import Logger from "../lib/Logger";
 import SettingsReader from "../lib/SettingsReader";
 
+/**
+ * Swaps the server IP's for the custom server IP.
+ */
 export const customServer = () => {
   const network = Il2Cpp.domain.assembly("SpaceApe.Network").image;
 

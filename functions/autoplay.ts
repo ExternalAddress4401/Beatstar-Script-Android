@@ -1,5 +1,8 @@
 let enabled = false;
 
+/**
+ * Enables autoplay. Automatically taps notes when they reach the perfect bar.
+ */
 const autoplay = () => {
   const assembly = Il2Cpp.domain.assembly("Assembly-CSharp").image;
   const RakshaModel = Il2Cpp.domain.assembly("RakshaModel").image;
