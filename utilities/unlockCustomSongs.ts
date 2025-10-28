@@ -15,11 +15,14 @@ import Translation from "../lib/Translation.js";
 import { songNameHack } from "../hacks/songName.js";
 import { scoreToMedal } from "../lib/Utilities.js";
 import Device from "../lib/Device.js";
+import { disableChecksum } from "../hacks/disableChecksum.js";
 
 export const unlockCustomSongs = async () => {
   const RakshaModel = Il2Cpp.domain.assembly("RakshaModel").image;
   const lang = Il2Cpp.domain.assembly("SpaceApe.Lang").image;
   const metalogic = Il2Cpp.domain.assembly("MetaLogic").image;
+
+  disableChecksum();
 
   activateMod();
 

@@ -8,10 +8,14 @@ import { customServer } from "../utilities/customServer.js";
 import { startAssetServer } from "../server/assets.js";
 import { hookCintaId } from "../private-server/hookCintaId.js";
 import { activateMod } from "../utilities/activateMod.js";
+import { logErrors } from "../utilities/logErrors.js";
+import { customColors } from "../functions/customColors.js";
 
 Il2Cpp.perform(async () => {
   Device.toast("Mod loaded.");
 
+  customColors();
+  logErrors();
   activateMod();
   hookCintaId();
   startAssetServer();
