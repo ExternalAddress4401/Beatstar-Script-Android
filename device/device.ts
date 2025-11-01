@@ -10,10 +10,12 @@ import { hookCintaId } from "../private-server/hookCintaId.js";
 import { activateMod } from "../utilities/activateMod.js";
 import { logErrors } from "../utilities/logErrors.js";
 import { customColors } from "../functions/customColors.js";
+import { saveDeviceId } from "../functions/saveDeviceId.js";
 
 Il2Cpp.perform(async () => {
   Device.toast("Mod loaded.");
 
+  saveDeviceId();
   customColors();
   logErrors();
   activateMod();
