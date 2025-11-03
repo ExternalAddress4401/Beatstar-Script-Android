@@ -13,7 +13,7 @@ export const ignoreBundleHash = () => {
       "System.String",
       "UnityEngine.Hash128",
       "System.UInt32"
-    ).implementation = function (uri: any /*there were 2 parameters here*/) {
+    ).implementation = function (uri: any) {
     let res = this.method("GetAssetBundle")
       .overload("System.String")
       .invoke(uri);

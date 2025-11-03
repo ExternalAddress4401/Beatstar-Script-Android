@@ -1,11 +1,5 @@
 import SettingsReader, { Color } from "../lib/SettingsReader.js";
 
-const colors: Record<string, any> = {
-  APLUS: null,
-  A: null,
-  B: null,
-};
-
 const createColor = (r: number, g: number, b: number, a: number) => {
   const core = Il2Cpp.domain.assembly("UnityEngine.CoreModule").image;
   const color = core.class("UnityEngine.Color").alloc();

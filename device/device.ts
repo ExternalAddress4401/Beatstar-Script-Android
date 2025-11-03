@@ -15,13 +15,13 @@ import { saveDeviceId } from "../functions/saveDeviceId.js";
 Il2Cpp.perform(async () => {
   Device.toast("Mod loaded.");
 
+  hookCintaId();
+  customServer();
   saveDeviceId();
   customColors();
   logErrors();
   activateMod();
-  hookCintaId();
   startAssetServer();
-  customServer();
   hookSupportButton();
   lengthFixer();
   hookGraphics();

@@ -8,6 +8,6 @@ export const activateMod = () => {
   freeRestarts();
   noFail();
   autoplay();
-  //forcePlayableSongs();
+  forcePlayableSongs();
   disableTutorial();
 };
