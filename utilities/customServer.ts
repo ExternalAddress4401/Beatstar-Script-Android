@@ -7,7 +7,7 @@ import SettingsReader from "../lib/SettingsReader";
 export const customServer = () => {
   const network = Il2Cpp.domain.assembly("SpaceApe.Network").image;
 
-  network.class("EndPointConfig").methd("get_IsMock").implementation =
+  network.class("EndPointConfig").method("get_IsMock").implementation =
     function () {
       const ip = SettingsReader.getSetting("serverIp") ?? "beatstarmod.app";
       this.field("host").value = Il2Cpp.string(ip);
