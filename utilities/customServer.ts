@@ -1,4 +1,3 @@
-import Logger from "../lib/Logger";
 import SettingsReader from "../lib/SettingsReader";
 
 /**
@@ -14,6 +13,6 @@ export const customServer = () => {
       this.field("port").value =
         SettingsReader.getSetting("serverPort") ?? 3000;
       this.field("useSsl").value = false;
-      this.method("get_IsMock").invoke();
+      return this.method("get_IsMock").invoke();
     };
 };

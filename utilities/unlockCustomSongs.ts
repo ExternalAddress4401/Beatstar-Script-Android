@@ -16,6 +16,7 @@ import { songNameHack } from "../hacks/songName.js";
 import { scoreToMedal } from "../lib/Utilities.js";
 import Device from "../lib/Device.js";
 import { disableChecksum } from "../hacks/disableChecksum.js";
+import ClassCache from "../lib/ClassCache.js";
 
 export const unlockCustomSongs = async () => {
   const RakshaModel = Il2Cpp.domain.assembly("RakshaModel").image;
@@ -67,12 +68,9 @@ export const unlockCustomSongs = async () => {
   //simplify the process with an index for where to add new values
   let index = tr.length;
 
-  let unlockSongProcess = Il2Cpp.gc.choose(
-    metalogic.class("UnlockSongProcess")
-  )[0];
-  let userBeatmaps = Il2Cpp.gc.choose(
-    metalogic.class("com.spaceape.flamingo.model.UserBeatmaps")
-  )[0];
+  let unlockSongProcess = ClassCache.unlockSongProcess;
+  let userBeatmaps = ClassCache.userBeatmaps;
+
   let transaction = userBeatmaps
     .method("CreateTransaction")
     .invoke(
