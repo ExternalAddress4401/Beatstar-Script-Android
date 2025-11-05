@@ -11,6 +11,7 @@ import { activateMod } from "../utilities/activateMod.js";
 import { logErrors } from "../utilities/logErrors.js";
 import { customColors } from "../functions/customColors.js";
 import { saveDeviceId } from "../functions/saveDeviceId.js";
+import SettingsReader from "../lib/SettingsReader.js";
 
 Il2Cpp.perform(async () => {
   Device.toast("Mod loaded.");
@@ -19,7 +20,9 @@ Il2Cpp.perform(async () => {
   customServer();
   saveDeviceId();
   customColors();
-  logErrors();
+  if (SettingsReader.getSetting("logErrors")) {
+    logErrors();
+  }
   activateMod();
   startAssetServer();
   hookSupportButton();

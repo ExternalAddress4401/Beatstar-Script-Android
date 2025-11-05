@@ -24,8 +24,6 @@ export default class CustomSongReader {
 
     const langConfig = ClassCache.langConfig;
 
-    console.log("LANG", langConfig);
-
     const originalTranslations = langConfig.field("translations")
       .value as Il2Cpp.Array;
     const originalTranslation = originalTranslations.get(0) as Il2Cpp.Object;

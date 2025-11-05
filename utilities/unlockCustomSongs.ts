@@ -21,7 +21,6 @@ import ClassCache from "../lib/ClassCache.js";
 export const unlockCustomSongs = async () => {
   const RakshaModel = Il2Cpp.domain.assembly("RakshaModel").image;
   const lang = Il2Cpp.domain.assembly("SpaceApe.Lang").image;
-  const metalogic = Il2Cpp.domain.assembly("MetaLogic").image;
 
   disableChecksum();
 
@@ -35,9 +34,7 @@ export const unlockCustomSongs = async () => {
   hookRemoteBundles();
 
   //get the lang config to set the translations later
-  const translations = Il2Cpp.gc.choose(
-    lang.class("com.spaceape.sharedlang.LangConfig")
-  )[0];
+  const translations = ClassCache.langConfig;
 
   const tr = translations.field("translations").value as Il2Cpp.Array;
   const locale = (
