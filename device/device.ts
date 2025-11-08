@@ -12,21 +12,36 @@ import { logErrors } from "../utilities/logErrors.js";
 import { customColors } from "../functions/customColors.js";
 import { saveDeviceId } from "../functions/saveDeviceId.js";
 import SettingsReader from "../lib/SettingsReader.js";
+import Logger from "../lib/Logger.js";
+import { hookScoring } from "../customs/hookScoring.js";
 
 Il2Cpp.perform(async () => {
   Device.toast("Mod loaded.");
+  startAssetServer();
 
+  Logger.log("Hooking cinta ID");
   hookCintaId();
+  Logger.log("Hooking custom server");
   customServer();
+  Logger.log("Saving device ID");
   saveDeviceId();
+  Logger.log("Applying custom colors");
   customColors();
+  Logger.log("Checking for logErrors");
   if (SettingsReader.getSetting("logErrors")) {
+    Logger.log("logErrors is on");
+
     logErrors();
   }
+  Logger.log("Activating mod");
   activateMod();
-  startAssetServer();
+  Logger.log("Hooking support button");
   hookSupportButton();
+  Logger.log("Applying length fixer");
   lengthFixer();
+  Logger.log("Hooking graphics");
   hookGraphics();
+  Logger.log("Hooking search");
   search();
+  hookScoring();
 });
