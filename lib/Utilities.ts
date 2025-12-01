@@ -1,9 +1,8 @@
-import SettingsReader from "./SettingsReader.js";
 import http from "@frida/http";
 import Logger from "../lib/Logger.js";
 import fs from "frida-fs";
-import { offline } from "./Globals.js";
 import Java from "frida-java-bridge";
+import SettingsReader from "./SettingsReader.js";
 
 export const readFileOnDevice = (
   fileName: string,
@@ -43,9 +42,6 @@ export const networkRequest = (path: string, data: object = {}): any => {
     headers: {
       "Content-Type": "application/json",
     },
-    body: {
-      data: JSON.stringify(data),
-    },
   };
 
   let result = "";
@@ -70,6 +66,47 @@ export const networkRequest = (path: string, data: object = {}): any => {
       req.write(JSON.stringify(data));
       req.end();
     } catch (e) {}
+  });
+};
+
+export const customServerNetworkRequest = (
+  path: string,
+  data: object = {}
+): any => {
+  const options = {
+    hostname: SettingsReader.getSetting("serverIp"),
+    port: SettingsReader.getSetting("serverExpressPort"),
+    path: path,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  let result = "";
+
+  return new Promise(function (resolve) {
+    try {
+      const req = http.request(options, (res: any) => {
+        res.on("data", (d: any) => {
+          result += d;
+        });
+
+        res.on("end", () => {
+          resolve(result);
+        });
+      });
+
+      req.on("error", (error: Buffer) => {
+        Logger.log(error.toString());
+        resolve(null);
+      });
+
+      req.write(JSON.stringify(data));
+      req.end();
+    } catch (e) {
+      console.log("Error", e);
+    }
   });
 };
 

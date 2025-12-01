@@ -3,6 +3,6 @@ export function disableChecksum() {
 
   assembly.class("ChecksumCalculator").method("Calc").implementation =
     function () {
-      return Il2Cpp.string("");
+      return this.method("Calc").invoke();
     };
 }

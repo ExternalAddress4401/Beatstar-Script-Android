@@ -54,30 +54,4 @@ export const customColors = () => {
       textColors.method("set_Item").invoke(b, bColorStruct.unbox());
     }
   };
-
-  /*assembly
-    .class("BeatStar.RhythmGame.RhythmGameColours")
-    .method("GetLaneColourForScore").implementation = function (
-    scoreType: any
-  ) {
-    if (scoreType.toString() == "APLUS" || lastNote) {
-      setLastNote(null);
-    }
-
-    const laneColors = this.field("laneColoursByScore").value;
-    return laneColors.method("get_Item").invoke(scoreType);
-  };
-
-  assembly
-    .class("BeatStar.RhythmGame.RhythmGameColours")
-    .method("GetFeedbackTextColourForScore").implementation = function (
-    scoreType: any
-  ) {
-    if (scoreType.toString() == "APLUS" || lastNote) {
-      setLastNote(null);
-    }
-    const textColors = this.field("feedbackTextColoursByScore").value;
-
-    return textColors.method("get_Item").invoke(scoreType);
-  };*/
 };

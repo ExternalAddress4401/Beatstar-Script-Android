@@ -1,4 +1,5 @@
 import fs from "frida-fs";
+import { setCinta } from "../lib/Globals";
 
 /**
  * Reads a cinta ID from the user file to authenticate a user.
@@ -8,9 +9,10 @@ export const hookCintaId = () => {
 
   loginRuntime.class("CintaProvider").method("get_Cinta").implementation =
     function () {
-      const user = Il2Cpp.string(
+      const cinta = Il2Cpp.string(
         fs.readFileSync("sdcard/beatstar/user").toString()
       );
-      return user;
+      setCinta(cinta.content);
+      return cinta;
     };
 };

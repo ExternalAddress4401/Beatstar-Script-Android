@@ -8,10 +8,9 @@ export const customServer = () => {
 
   network.class("EndPointConfig").method("get_IsMock").implementation =
     function () {
-      const ip = SettingsReader.getSetting("serverIp") ?? "beatstarmod.app";
+      const ip = SettingsReader.getSetting("serverIp");
       this.field("host").value = Il2Cpp.string(ip);
-      this.field("port").value =
-        SettingsReader.getSetting("serverPort") ?? 3000;
+      this.field("port").value = SettingsReader.getSetting("serverPort");
       this.field("useSsl").value = false;
       return this.method("get_IsMock").invoke();
     };
