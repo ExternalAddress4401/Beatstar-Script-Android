@@ -38,9 +38,11 @@ class SettingsReader {
         .toString();
       this.settings = JSON.parse(settings);
     } catch (e) {
-      const error = e as Error;
-      if (Logger) {
-        Logger.log(`Error reading settings file: ${error.message}`);
+      // if it doesn't exist make it
+      try {
+        fs.statSync("sdcard/beatstar/settings.json");
+      } catch (e) {
+        fs.writeFileSync("sdcard/beatstar/settings.json", "{}");
       }
     }
     this.setDefaults();
