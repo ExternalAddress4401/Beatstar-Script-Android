@@ -71,42 +71,72 @@ export const networkRequest = (path: string, data: object = {}): any => {
 
 export const customServerNetworkRequest = (
   path: string,
-  data: object = {}
-): any => {
-  const options = {
-    hostname: SettingsReader.getSetting("serverIp"),
-    port: SettingsReader.getSetting("serverExpressPort"),
-    path: path,
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-  };
-
-  let result = "";
-
+  body: any = {}
+): Promise<string> => {
   return new Promise(function (resolve) {
-    try {
-      const req = http.request(options, (res: any) => {
-        res.on("data", (d: any) => {
-          result += d;
-        });
+    const host = SettingsReader.getSetting("serverIp");
+    const port = SettingsReader.getSetting("serverExpressPort");
 
-        res.on("end", () => {
-          resolve(result);
-        });
-      });
+    const targetUrl = "http://" + host + ":" + port + path;
 
-      req.on("error", (error: Buffer) => {
-        Logger.log(error.toString());
-        resolve(null);
-      });
+    body = JSON.stringify(body);
 
-      req.write(JSON.stringify(data));
-      req.end();
-    } catch (e) {
-      console.log("Error", e);
-    }
+    Java.perform(function () {
+      var HttpURLConnection = Java.use("java.net.HttpURLConnection");
+      var URL = Java.use("java.net.URL");
+      var BufferedReader = Java.use("java.io.BufferedReader");
+      var BufferedWriter = Java.use("java.io.BufferedWriter");
+      var BufferedOutputStream = Java.use("java.io.BufferedOutputStream");
+      var OutputStreamWriter = Java.use("java.io.OutputStreamWriter");
+      var StringBuilder = Java.use("java.lang.StringBuilder");
+      var InputStreamReader = Java.use("java.io.InputStreamReader");
+
+      var url = URL.$new(Java.use("java.lang.String").$new(targetUrl));
+      var conn = url.openConnection();
+      conn = Java.cast(conn, HttpURLConnection);
+      conn.setRequestMethod("POST");
+      conn.setRequestProperty("Content-Type", "application/json");
+      conn.setConnectTimeout(5000);
+      conn.setReadTimeout(5000);
+      conn.setDoInput(true);
+      conn.setDoOutput(true);
+      conn.setChunkedStreamingMode(0);
+
+      let os;
+      try {
+        os = conn.getOutputStream();
+      } catch (e) {
+        resolve("{}");
+        return;
+      }
+
+      const out = BufferedOutputStream.$new(os);
+      const osw = OutputStreamWriter.$new(
+        out,
+        Java.use("java.lang.String").$new("UTF-8")
+      );
+      var writer = BufferedWriter.$new(osw);
+      writer.$super.write(Java.use("java.lang.String").$new(body));
+      writer.flush();
+      writer.close();
+      os.close();
+
+      conn.connect();
+      var code = conn.getResponseCode();
+      var ret: string | null = null;
+      if (code == 200) {
+        var inputStream = conn.getInputStream();
+        var buffer = BufferedReader.$new(InputStreamReader.$new(inputStream));
+        var sb = StringBuilder.$new();
+        var line = null;
+        while ((line = buffer.readLine()) != null) {
+          sb.append(line);
+        }
+        ret = sb.toString();
+      }
+      conn.disconnect();
+      resolve(ret as string);
+    });
   });
 };
 

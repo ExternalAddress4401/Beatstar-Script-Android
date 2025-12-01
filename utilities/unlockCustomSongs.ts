@@ -141,6 +141,7 @@ const applyCustomSongScores = async () => {
   const scores = JSON.parse(
     await customServerNetworkRequest("/scores", { cinta })
   );
+  Logger.log(JSON.stringify(scores));
 
   const customBeatmaps = Il2Cpp.gc
     .choose(RakshaModel.class("com.spaceape.flamingo.model.BeatmapTO"))
