@@ -11,8 +11,10 @@ import { hookSettingsButton } from "../hacks/hookSettingsButton.js";
 import { hookSupportButton } from "../hacks/hookSupportButton.js";
 import { saveProfile } from "../utilities/saveProfile.js";
 import { customServer } from "../utilities/customServer.js";
+import { startAssetServer } from "../server/assets.js";
 
 Il2Cpp.perform(async () => {
+  startAssetServer();
   customServer();
   if (SettingsReader.getSetting("fakeVersion")) {
     fakeVersion();

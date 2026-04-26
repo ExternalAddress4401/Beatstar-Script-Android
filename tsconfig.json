@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-	"types": ["frida-gum"],
+    "types": ["frida-gum", "node"],
     "target": "esnext",
     "lib": ["es2020"],
     "experimentalDecorators": true,

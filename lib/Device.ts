@@ -18,7 +18,7 @@ class Device {
 
     return Java.use("android.provider.Settings$Secure").getString(
       context,
-      "android_id"
+      "android_id",
     );
   }
 
@@ -33,12 +33,11 @@ class Device {
               .currentApplication()
               .getApplicationContext(),
             Java.use("java.lang.String").$new(message),
-            1
+            1,
           )
           .show();
       });
     } catch (e) {
-      const error = e as Error;
       console.log("Failed to show toast");
     }
   }
