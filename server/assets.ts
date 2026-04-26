@@ -46,7 +46,5 @@ export const startAssetServer = () => {
     }
   });
 
-  server.listen(3570, "127.0.0.1", () => {
-    console.log("Server running at http://127.0.0.1:3570");
-  });
+  server.listen(3570, "127.0.0.1");
 };

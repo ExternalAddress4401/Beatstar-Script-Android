@@ -12,6 +12,7 @@ import {
   getJavaVersion,
   networkRequest,
 } from "../lib/Utilities.js";
+import { startAssetServer } from "../server/assets.js";
 
 type RPCStatus =
   | "NO_ACTION"
@@ -36,16 +37,16 @@ function checkForStoragePermissions() {
     const intentClass = Java.use("android.content.Intent");
     const Settings = Java.use("android.provider.Settings");
     const uri = Java.use("android.net.Uri").parse(
-      `package:${context.getPackageName()}`
+      `package:${context.getPackageName()}`,
     );
     const intent = intentClass.$new(
       Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION.value,
-      uri
+      uri,
     );
     intent.addFlags(268435456);
 
     Device.toast(
-      "You're missing storage permissions. Add them here and restart."
+      "You're missing storage permissions. Add them here and restart.",
     );
 
     context.startActivity(intent);
@@ -75,6 +76,8 @@ rpc.exports = {
 Il2Cpp.perform(async () => {
   Logger.log(`Inside perform block with ${done}`);
 
+  startAssetServer();
+
   if (!checkForStoragePermissions()) {
     return;
   }
@@ -88,7 +91,7 @@ Il2Cpp.perform(async () => {
       break;
     case "NEW_VERSION":
       Device.toast(
-        "Script updated. Please restart Beatstar unless following #instructions."
+        "Script updated. Please restart Beatstar unless following #instructions.",
       );
       break;
     case "SERVER_DOWN":
@@ -123,7 +126,7 @@ const executeScript = async () => {
   //the script should be responsible for showing "Mod loaded." so we don't get false positives
 
   try {
-    eval(decrypted);
+    Script.evaluate("script", decrypted);
   } catch (e) {
     const error = e as Error;
     Logger.log(`Error running script: ${error.message}`);

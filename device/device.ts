@@ -5,7 +5,6 @@ import { hookGraphics } from "../hacks/graphics.js";
 import { search } from "../functions/search.js";
 import { hookSupportButton } from "../hacks/hookSupportButton.js";
 import { customServer } from "../utilities/customServer.js";
-import { startAssetServer } from "../server/assets.js";
 import { hookCintaId } from "../private-server/hookCintaId.js";
 import { activateMod } from "../utilities/activateMod.js";
 import { logErrors } from "../utilities/logErrors.js";
@@ -17,7 +16,6 @@ import { hookScoring } from "../customs/hookScoring.js";
 
 Il2Cpp.perform(async () => {
   Device.toast("Mod loaded.");
-  startAssetServer();
 
   Logger.log("Hooking cinta ID");
   hookCintaId();
