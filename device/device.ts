@@ -14,6 +14,7 @@ import { saveDeviceId } from "../functions/saveDeviceId.js";
 import SettingsReader from "../lib/SettingsReader.js";
 import Logger from "../lib/Logger.js";
 import { hookScoring } from "../customs/hookScoring.js";
+import { startAssetServer } from "../server/assets.js";
 
 Il2Cpp.perform(async () => {
   Device.toast("Mod loaded.");
@@ -22,6 +23,7 @@ Il2Cpp.perform(async () => {
   Logger.log("Hooking cinta ID");
   hookCintaId();
   Logger.log("Hooking custom server");
+  startAssetServer();
   customServer();
   Logger.log("Saving device ID");
   saveDeviceId();
