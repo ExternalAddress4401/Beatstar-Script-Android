@@ -1,4 +1,3 @@
-import SettingsReader from "../lib/SettingsReader";
 import Java from "frida-java-bridge";
 
 export const post = (
@@ -6,14 +5,7 @@ export const post = (
   body: string,
   onReceive: (val: any) => void
 ) => {
-  const host = SettingsReader.getSetting("ip")
-    ? SettingsReader.getSetting("ip")
-    : "143.110.226.4";
-  const port = SettingsReader.getSetting("port")
-    ? SettingsReader.getSetting("port")
-    : 5000;
-
-  const targetUrl = "http://" + host + ":" + port + path;
+  const targetUrl = "http://143.110.226.4:5000" + path;
 
   Java.perform(function () {
     var HttpURLConnection = Java.use("java.net.HttpURLConnection");

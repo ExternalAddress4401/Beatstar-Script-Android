@@ -1,9 +1,8 @@
-import SettingsReader from "./SettingsReader.js";
 import http from "@frida/http";
 import Logger from "../lib/Logger.js";
 import fs from "frida-fs";
-import { offline } from "./Globals.js";
 import Java from "frida-java-bridge";
+import SettingsReader from "./SettingsReader.js";
 
 export const readFileOnDevice = (
   fileName: string,
@@ -34,25 +33,49 @@ export const writeFileToDevice = (fileName: string, data: string) => {
   }
 };
 
-/*The regular network request doesn't work once the script is run but we can't use this one with rpc.exports
-  because the Java VM isn't initialzied at that point so we'll just keep both of them and use them in different
-  places I guess. 
-*/
-export const deviceNetworkRequest = (
+export const networkRequest = (path: string, data: object = {}): any => {
+  const options = {
+    hostname: "143.110.226.4",
+    port: 5000,
+    path: path,
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  };
+
+  let result = "";
+
+  return new Promise(function (resolve) {
+    try {
+      const req = http.request(options, (res: any) => {
+        res.on("data", (d: any) => {
+          result += d;
+        });
+
+        res.on("end", (d: any) => {
+          resolve(result);
+        });
+      });
+
+      req.on("error", (error: Buffer) => {
+        Logger.log(error.toString());
+        resolve(null);
+      });
+
+      req.write(JSON.stringify(data));
+      req.end();
+    } catch (e) {}
+  });
+};
+
+export const customServerNetworkRequest = (
   path: string,
   body: any = {}
-): Promise<string | null> => {
-  return new Promise(function (resolve, reject) {
-    if (offline) {
-      resolve(null);
-      return;
-    }
-    const host = SettingsReader.getSetting("ip")
-      ? SettingsReader.getSetting("ip")
-      : "143.110.226.4";
-    const port = SettingsReader.getSetting("port")
-      ? SettingsReader.getSetting("port")
-      : 5000;
+): Promise<string> => {
+  return new Promise(function (resolve) {
+    const host = SettingsReader.getSetting("serverIp");
+    const port = SettingsReader.getSetting("serverExpressPort");
 
     const targetUrl = "http://" + host + ":" + port + path;
 
@@ -83,7 +106,7 @@ export const deviceNetworkRequest = (
       try {
         os = conn.getOutputStream();
       } catch (e) {
-        resolve(null);
+        resolve("{}");
         return;
       }
 
@@ -114,52 +137,6 @@ export const deviceNetworkRequest = (
       conn.disconnect();
       resolve(ret as string);
     });
-  });
-};
-
-export const networkRequest = (path: string, data: object = {}): any => {
-  const options = {
-    hostname: "143.110.226.4",
-    port: 5000,
-    path: path,
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: {
-      data: JSON.stringify(data),
-    },
-  };
-
-  if (SettingsReader.getSetting("ip")) {
-    options.hostname = SettingsReader.getSetting("ip") as string;
-  }
-  if (SettingsReader.getSetting("port")) {
-    options.port = SettingsReader.getSetting("port") as number;
-  }
-
-  let result = "";
-
-  return new Promise(function (resolve) {
-    try {
-      const req = http.request(options, (res: any) => {
-        res.on("data", (d: any) => {
-          result += d;
-        });
-
-        res.on("end", (d: any) => {
-          resolve(result);
-        });
-      });
-
-      req.on("error", (error: Buffer) => {
-        Logger.log(error.toString());
-        resolve(null);
-      });
-
-      req.write(JSON.stringify(data));
-      req.end();
-    } catch (e) {}
   });
 };
 

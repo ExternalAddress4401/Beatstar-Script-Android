@@ -5,6 +5,7 @@ import BeatmapTemplate from "./BeatmapTemplate.js";
 import DataCache from "./DataCache.js";
 import Device from "./Device.js";
 import Logger from "./Logger.js";
+import ClassCache from "../lib/ClassCache.js";
 
 export default class CustomSongReader {
   dataCache: DataCache;
@@ -21,9 +22,8 @@ export default class CustomSongReader {
     let file = Java.use("java.io.File");
     let files = file.$new("sdcard/beatstar/songs").listFiles();
 
-    const langConfig = Il2Cpp.gc.choose(
-      lang.class("com.spaceape.sharedlang.LangConfig")
-    )[0];
+    const langConfig = ClassCache.langConfig;
+
     const originalTranslations = langConfig.field("translations")
       .value as Il2Cpp.Array;
     const originalTranslation = originalTranslations.get(0) as Il2Cpp.Object;
@@ -109,7 +109,9 @@ export default class CustomSongReader {
         })
       );
     }
+
     await Promise.all(promises);
+
     if (brokenSongs.length) {
       Device.toast(
         `${brokenSongs.length} broken song${
