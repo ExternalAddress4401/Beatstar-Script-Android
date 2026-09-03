@@ -76,3 +76,7 @@ You will now have a `beatstar-aligned-debugSigned.apk` file which can be install
 `hacks` - anything that interacts with gameplay in some way
 
 `lib` - utility functions mostly for creating a base custom chart
+
+## AI Usage
+
+No AI was used in the creation of this project or any adjacent repo. AI use is discouraged and no PR's using AI will be accepted.
