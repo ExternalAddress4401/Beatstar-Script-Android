@@ -30,7 +30,6 @@ Il2Cpp.perform(async () => {
   Logger.log("Checking for logErrors");
   if (SettingsReader.getSetting("logErrors")) {
     Logger.log("logErrors is on");
-
     logErrors();
   }
   Logger.log("Activating mod");

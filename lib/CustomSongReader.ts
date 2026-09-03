@@ -7,6 +7,39 @@ import Device from "./Device.js";
 import Logger from "./Logger.js";
 import ClassCache from "../lib/ClassCache.js";
 
+const patchFile = (path: string, offset: number) => {
+  const mscorlib = Il2Cpp.domain.assembly("mscorlib").image;
+
+  const stream = mscorlib.class("System.IO.FileStream").alloc();
+  stream
+    .method(".ctor")
+    .overload("System.String", "System.IO.FileMode", "System.IO.FileAccess")
+    .invoke(
+      Il2Cpp.string(path),
+      mscorlib.class("System.IO.FileMode").field("Open").value,
+      mscorlib.class("System.IO.FileAccess").field("ReadWrite").value,
+    );
+
+  stream.method("set_Position").invoke(new Int64(offset));
+  const deviceByte = stream.method("ReadByte").invoke();
+  if (deviceByte === 13) {
+    // already patched
+    stream.method("Dispose").invoke(false);
+    return;
+  }
+
+  if (deviceByte !== 9) {
+    Logger.log("Failed to patch bundle: ", path);
+    stream.method("Dispose").invoke(false);
+    return;
+  }
+
+  stream.method("set_Position").invoke(new Int64(offset));
+  stream.method("WriteByte").invoke(13);
+  stream.method("Flush").invoke();
+  stream.method("Dispose").invoke(false);
+};
+
 export default class CustomSongReader {
   dataCache: DataCache;
 
@@ -31,7 +64,18 @@ export default class CustomSongReader {
     for (var x = 0; x < files.length; x++) {
       promises.push(
         new Promise((resolve, reject) => {
-          const index = x;
+          try {
+            if (files[x].toString().toLowerCase().includes("macosx")) {
+              resolve();
+              return;
+            }
+            patchFile(files[x] + "/artwork.bundle", 249);
+            patchFile(files[x] + "/audio.bundle", 187);
+            patchFile(files[x] + "/chart.bundle", 187);
+          } catch (e) {
+            console.log(e);
+          }
+
           let data = this.readFileOnDevice(`${files[x]}/info.json`);
 
           data.path = `file:///${files[x]}/`;
@@ -82,7 +126,7 @@ export default class CustomSongReader {
             parseInt(data.sections),
             score,
             data.numLanes,
-            data.type
+            data.type,
           );
 
           let template;
@@ -106,7 +150,7 @@ export default class CustomSongReader {
             template: template,
           });
           resolve();
-        })
+        }),
       );
     }
 
@@ -116,7 +160,7 @@ export default class CustomSongReader {
       Device.toast(
         `${brokenSongs.length} broken song${
           brokenSongs.length === 1 ? "" : "s"
-        } detected. See log for names.`
+        } detected. See log for names.`,
       );
       Logger.log("Broken songs: " + brokenSongs.join(", "));
     }
@@ -124,7 +168,7 @@ export default class CustomSongReader {
   }
   readFileOnDevice = (fileName: string): any => {
     const currentApplication = Java.use(
-      "android.app.ActivityThread"
+      "android.app.ActivityThread",
     ).currentApplication();
     const context = currentApplication.getApplicationContext();
     const BufferedReader = Java.use("java.io.BufferedReader");
@@ -164,7 +208,7 @@ export default class CustomSongReader {
             .currentApplication()
             .getApplicationContext(),
           Java.use("java.lang.String").$new(message),
-          1
+          1,
         )
         .show();
 

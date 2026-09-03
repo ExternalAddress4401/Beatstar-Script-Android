@@ -10,7 +10,7 @@ const autoplay = () => {
   assembly
     .class("BeatStar.RhythmGame.GameController")
     .method("InteractionVisibleStart").implementation = function (
-    interaction: Il2Cpp.Object
+    interaction: Il2Cpp.Object,
   ) {
     if (!enabled) {
       return this.method("InteractionVisibleStart").invoke(interaction);
@@ -40,14 +40,21 @@ const autoplay = () => {
     } else if (type == "HoldInteraction") {
       const timeForPerfect = interaction.field("timeForStartPerfect")
         .value as number;
+      const autoEndTime = interaction.field("autoEndTime").value as number;
       const difference = (timeForPerfect - currentTime) as number;
+      const endDifference = (autoEndTime - currentTime) as number;
+
       setTimeout(() => {
         const note = back.target;
         note
           ?.method("HandleTouchStarted")
           .invoke(timeForPerfect, timeForPerfect, 1);
-        back.free();
       }, difference * 1000);
+      setTimeout(() => {
+        const note = back.target;
+        note?.method("HandleTouchEnd").invoke(autoEndTime, 1, false);
+        back.free();
+      }, endDifference * 1000);
     } else if (type == "FlickInteraction") {
       const timeForPerfect = interaction.field("timeForPerfect")
         .value as number;
@@ -68,28 +75,40 @@ const autoplay = () => {
       const flickDifference = (flickPerfect - currentTime) as number;
 
       setTimeout(() => {
-        interaction
+        const note = back.target;
+        note
           .method("HandleTouchStarted")
           .invoke(info, timeForPerfect, timeForPerfect);
       }, difference * 1000);
       setTimeout(() => {
-        interaction.method("HandleFlickComplete").invoke(flickDifference);
+        const note = back.target;
+        note.method("HandleFlickComplete").invoke(flickDifference);
+        back.free();
       }, flickDifference * 1000);
     } else if (type == "SwitchHoldInteraction") {
       const timeForPerfect = interaction.field("timeForStartPerfect")
         .value as number;
+      const autoEndTime = interaction.field("autoEndTime").value as number;
       const difference = (timeForPerfect - currentTime) as number;
+      const endDifference = (autoEndTime - currentTime) as number;
+
       setTimeout(() => {
-        interaction
-          .method("HandleTouchStarted")
+        const note = back.target;
+        note
+          ?.method("HandleTouchStarted")
           .invoke(
             timeForPerfect,
             timeForPerfect,
             1,
             RakshaModel.class("com.spaceape.config.ScoreType").field("APLUS")
-              .value
+              .value,
           );
       }, difference * 1000);
+      setTimeout(() => {
+        const note = back.target;
+        note?.method("HandleTouchEnd").invoke(autoEndTime, 1, false);
+        back.free();
+      }, endDifference * 1000);
     } else if (type == "SwitchHoldFlickInteraction") {
       const info = assembly.class("DanceInput.TouchInput").alloc();
       info.method(".ctor").invoke(1);
@@ -101,19 +120,22 @@ const autoplay = () => {
       const flickDifference = (flickPerfect - currentTime) as number;
 
       setTimeout(() => {
-        interaction
+        const note = back.target;
+        note
           .method("HandleTouchStarted")
           .invoke(
             info,
             timeForPerfect,
             timeForPerfect,
             RakshaModel.class("com.spaceape.config.ScoreType").field("APLUS")
-              .value
+              .value,
           );
       }, difference * 1000);
 
       setTimeout(() => {
-        interaction.method("HandleFlickComplete").invoke(flickDifference);
+        const note = back.target;
+        note.method("HandleFlickComplete").invoke(flickDifference);
+        back.free();
       }, flickDifference * 1000);
     }
 
