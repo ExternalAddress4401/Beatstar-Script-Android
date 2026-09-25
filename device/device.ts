@@ -14,6 +14,7 @@ import { saveDeviceId } from "../functions/saveDeviceId.js";
 import SettingsReader from "../lib/SettingsReader.js";
 import Logger from "../lib/Logger.js";
 import { hookScoring } from "../customs/hookScoring.js";
+import { stopPauseHandler } from "../functions/stopPauseHandler.js";
 
 Il2Cpp.perform(async () => {
   Device.toast("Mod loaded.");
@@ -43,4 +44,5 @@ Il2Cpp.perform(async () => {
   Logger.log("Hooking search");
   search();
   hookScoring();
+  stopPauseHandler();
 });
